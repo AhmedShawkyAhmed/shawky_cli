@@ -4,6 +4,7 @@ on:
   release:
     types:
       - published  # Trigger when a new release is published
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
   delete-assets:
@@ -11,6 +12,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: List release assets
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+        run: |
+          release_tag="${{ github.event.release.tag_name }}"
+          echo "Listing assets for release: $release_tag"
+          gh release view "$release_tag" --json assets -q ".assets[].name"
 
       - name: Delete source code assets
         env:
@@ -20,9 +29,11 @@ jobs:
           release_exists=$(gh release view "$release_tag" --json id -q ".id" || echo "not found")
 
           if [ "$release_exists" != "not found" ]; then
-            asset_ids=$(gh release view "$release_tag" --json assets -q ".assets[] | select(.name | contains(\"Source code\")) | .id")
+            # List all assets and filter based on zip file or source code name
+            asset_ids=$(gh release view "$release_tag" --json assets -q ".assets[] | select(.name | contains(\"source code\") or contains(\".zip\")) | .id")
 
             for asset_id in $asset_ids; do
+              echo "Deleting asset: $asset_id"
               gh release delete $asset_id --repo AhmedShawkyAhmed/shawky_cli --confirm
             done
           else
