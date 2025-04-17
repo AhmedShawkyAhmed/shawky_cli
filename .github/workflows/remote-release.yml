@@ -1,0 +1,12 @@
+name: Remote Release Trigger
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print trigger source
+        run: echo "Triggered by external webhook (GitLab)"
