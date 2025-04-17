@@ -4,7 +4,12 @@ on:
   release:
     types:
       - published  # Trigger when a new release is published
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:  # Allow manual trigger with an input parameter
+    inputs:
+      release_tag:
+        description: 'Release tag to delete assets from'
+        required: true
+        type: string
 
 jobs:
   delete-assets:
@@ -17,7 +22,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
         run: |
-          release_tag="${{ github.event.release.tag_name }}"
+          release_tag="${{ github.event.inputs.release_tag || github.event.release.tag_name }}"
           echo "Listing assets for release: $release_tag"
           gh release view "$release_tag" --json assets -q ".assets[].name"
 
@@ -25,7 +30,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
         run: |
-          release_tag="${{ github.event.release.tag_name }}"
+          release_tag="${{ github.event.inputs.release_tag || github.event.release.tag_name }}"
           release_exists=$(gh release view "$release_tag" --json id -q ".id" || echo "not found")
 
           if [ "$release_exists" != "not found" ]; then
