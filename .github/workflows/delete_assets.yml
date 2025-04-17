@@ -1,0 +1,30 @@
+name: Delete Assets from Release
+
+on:
+  release:
+    types:
+      - published  # Trigger when a new release is published
+
+jobs:
+  delete-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Delete source code assets
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+        run: |
+          release_tag="${{ github.event.release.tag_name }}"
+          release_exists=$(gh release view "$release_tag" --json id -q ".id" || echo "not found")
+
+          if [ "$release_exists" != "not found" ]; then
+            asset_ids=$(gh release view "$release_tag" --json assets -q ".assets[] | select(.name | contains(\"Source code\")) | .id")
+
+            for asset_id in $asset_ids; do
+              gh release delete $asset_id --repo AhmedShawkyAhmed/shawky_cli --confirm
+            done
+          else
+            echo "Release $release_tag not found, skipping asset deletion."
+          fi
