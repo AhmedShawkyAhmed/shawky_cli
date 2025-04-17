@@ -34,7 +34,7 @@ jobs:
 
             for asset_id in $asset_ids; do
               echo "Deleting asset: $asset_id"
-              gh release delete $asset_id --repo AhmedShawkyAhmed/shawky_cli --confirm
+              gh release delete $asset_id --repo AhmedShawkyAhmed/shawky_cli -y
             done
           else
             echo "Release $release_tag not found, skipping asset deletion."
