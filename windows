@@ -5,7 +5,7 @@ set CLI_NAME=shawky
 set INSTALL_PATH=%ProgramData%\shawkyCLI
 set BIN_PATH=%INSTALL_PATH%\%CLI_NAME%.bat
 set DOWNLOAD_URL=https://github.com/AhmedShawkyAhmed/shawky_cli/releases/latest/download/shawkyCLI.zip
-set ZIP_PASSWORD=6db276063e7b9881b63f9876fe787dd36e835249bd26b361e1cf50d4bbdc5fc1
+set ZIP_PASSWORD=shawky
 
 echo 🔧 Installing %CLI_NAME% CLI...
 
