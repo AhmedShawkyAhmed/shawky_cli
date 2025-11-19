@@ -1,4 +1,0 @@
-#!/bin/bash
-DIR="$(cd "$(dirname "$0")" && pwd)"
-chmod +x "$DIR/mac"
-osascript -e "tell application \"Terminal\" to do script \"cd '$DIR' && ./mac\""
